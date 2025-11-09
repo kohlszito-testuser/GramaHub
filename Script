@@ -1,0 +1,230 @@
+task.wait(1)
+local player = game:GetService("Players").LocalPlayer
+if not player then
+	repeat task.wait() player = game:GetService("Players").LocalPlayer until player
+end
+
+local playerGui = player:WaitForChild("PlayerGui")
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "KohlsHub"
+gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
+gui.Parent = playerGui
+
+local function applyOpacity(guiObject)
+	if guiObject:IsA("GuiObject") then
+		guiObject.BackgroundTransparency = 0.3
+	end
+end
+
+-- 📦 Frame principal (compacto e centralizado)
+local main = Instance.new("Frame")
+main.Name = "MainFrame"
+main.Size = UDim2.new(0, 280, 0, 300)
+main.Position = UDim2.new(0.5, 0, 0.5, 0)
+main.AnchorPoint = Vector2.new(0.5, 0.5)
+main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+main.Active = true
+main.Draggable = true
+applyOpacity(main)
+main.Parent = gui
+
+Instance.new("UICorner", main).CornerRadius = UDim.new(0, 10)
+local stroke = Instance.new("UIStroke", main)
+stroke.Thickness = 1
+stroke.Transparency = 0.7
+
+-- 🧱 TopBar
+local top = Instance.new("Frame", main)
+top.Name = "TopBar"
+top.Size = UDim2.new(1, 0, 0, 32)
+top.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+applyOpacity(top)
+Instance.new("UICorner", top)
+
+local title = Instance.new("TextLabel", top)
+title.Size = UDim2.new(1, -70, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Font = Enum.Font.GothamBold
+title.Text = "Kohls Hub 😼"
+title.TextSize = 15
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- 🔽 Botão Minimizar
+local minimize = Instance.new("TextButton", top)
+minimize.Size = UDim2.new(0, 24, 0, 24)
+minimize.Position = UDim2.new(1, -60, 0, 4)
+minimize.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+minimize.Text = "-"
+minimize.Font = Enum.Font.GothamBold
+minimize.TextSize = 16
+minimize.TextColor3 = Color3.new(1, 1, 1)
+applyOpacity(minimize)
+Instance.new("UICorner", minimize).CornerRadius = UDim.new(1, 0)
+
+-- ❌ Botão Fechar
+local close = Instance.new("TextButton", top)
+close.Size = UDim2.new(0, 24, 0, 24)
+close.Position = UDim2.new(1, -30, 0, 4)
+close.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+close.Text = "X"
+close.Font = Enum.Font.GothamBold
+close.TextSize = 14
+close.TextColor3 = Color3.new(1, 1, 1)
+applyOpacity(close)
+Instance.new("UICorner", close).CornerRadius = UDim.new(1, 0)
+
+close.MouseButton1Click:Connect(function()
+	gui:Destroy()
+end)
+
+-- 🧩 Conteúdo principal
+local content = Instance.new("Frame", main)
+content.Size = UDim2.new(1, -16, 1, -48)
+content.Position = UDim2.new(0, 8, 0, 40)
+content.BackgroundTransparency = 1
+content.Parent = main
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+
+-- 🌿 Botão Auto Grama
+local autoGramaBtn = Instance.new("TextButton", content)
+autoGramaBtn.Size = UDim2.new(0, 120, 0, 32)
+autoGramaBtn.Position = UDim2.new(0, 8, 0, 8)
+autoGramaBtn.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
+autoGramaBtn.Text = "Auto Grama: OFF"
+autoGramaBtn.Font = Enum.Font.GothamBold
+autoGramaBtn.TextSize = 14
+autoGramaBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+applyOpacity(autoGramaBtn)
+Instance.new("UICorner", autoGramaBtn).CornerRadius = UDim.new(0, 6)
+
+local GrassRemote = Remotes:WaitForChild("GrassCollect")
+local argsGrama = {{
+	normal = 0,
+	ruby = 0,
+	silver = 0,
+	golden = 0,
+	diamond = 999
+}}
+local autoGramaAtivo = false
+
+local function iniciarAutoGrama()
+	task.spawn(function()
+		while autoGramaAtivo do
+			pcall(function()
+				GrassRemote:FireServer(unpack(argsGrama))
+			end)
+			task.wait(0.1)
+		end
+	end)
+end
+
+autoGramaBtn.MouseButton1Click:Connect(function()
+	autoGramaAtivo = not autoGramaAtivo
+	if autoGramaAtivo then
+		autoGramaBtn.BackgroundColor3 = Color3.fromRGB(80, 200, 80)
+		autoGramaBtn.Text = "Auto Grama: ON"
+		iniciarAutoGrama()
+	else
+		autoGramaBtn.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
+		autoGramaBtn.Text = "Auto Grama: OFF"
+	end
+end)
+
+-- 💥 Botão Auto Pop
+local autoPopBtn = Instance.new("TextButton", content)
+autoPopBtn.Size = UDim2.new(0, 120, 0, 32)
+autoPopBtn.Position = UDim2.new(0, 8, 0, 48)
+autoPopBtn.BackgroundColor3 = Color3.fromRGB(50, 100, 200)
+autoPopBtn.Text = "Auto Pop: OFF"
+autoPopBtn.Font = Enum.Font.GothamBold
+autoPopBtn.TextSize = 14
+autoPopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+applyOpacity(autoPopBtn)
+Instance.new("UICorner", autoPopBtn).CornerRadius = UDim.new(0, 6)
+
+local PopRemote = Remotes:WaitForChild("IncreasePop")
+local argsPop = { false }
+local autoPopAtivo = false
+
+local function iniciarAutoPop()
+	task.spawn(function()
+		while autoPopAtivo do
+			pcall(function()
+				PopRemote:FireServer(unpack(argsPop))
+			end)
+			task.wait(0.1)
+		end
+	end)
+end
+
+autoPopBtn.MouseButton1Click:Connect(function()
+	autoPopAtivo = not autoPopAtivo
+	if autoPopAtivo then
+		autoPopBtn.BackgroundColor3 = Color3.fromRGB(80, 160, 255)
+		autoPopBtn.Text = "Auto Pop: ON"
+		iniciarAutoPop()
+	else
+		autoPopBtn.BackgroundColor3 = Color3.fromRGB(50, 100, 200)
+		autoPopBtn.Text = "Auto Pop: OFF"
+	end
+end)
+
+-- 🌀 Teleportes
+local teleportFrame = Instance.new("Frame", content)
+teleportFrame.Size = UDim2.new(0, 250, 0, 120)
+teleportFrame.Position = UDim2.new(0, 8, 0, 88)
+teleportFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+applyOpacity(teleportFrame)
+Instance.new("UICorner", teleportFrame).CornerRadius = UDim.new(0, 8)
+
+local teleBtnY = 8
+local teleports = {
+	{nome = "Ilha 1 🏝️", pos = CFrame.new(552.188049, 16.6474037, -1038.63306)},
+	{nome = "Ilha 2 🌊", pos = CFrame.new(620.260925, 21.5955429, -1038.64014)},
+	{nome = "Ilha 3 🌋", pos = CFrame.new(677.856689, 26.6776505, -964.859619)}
+}
+
+for _, info in ipairs(teleports) do
+	local btn = Instance.new("TextButton", teleportFrame)
+	btn.Size = UDim2.new(1, -16, 0, 28)
+	btn.Position = UDim2.new(0, 8, 0, teleBtnY)
+	btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+	btn.Text = info.nome
+	btn.Font = Enum.Font.GothamBold
+	btn.TextSize = 14
+	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	applyOpacity(btn)
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 5)
+	btn.MouseButton1Click:Connect(function()
+		local char = player.Character or player.CharacterAdded:Wait()
+		local hrp = char:FindFirstChild("HumanoidRootPart")
+		if hrp then
+			hrp.CFrame = info.pos
+		end
+	end)
+	teleBtnY += 32
+end
+
+-- 🔄 Função de minimizar/restaurar
+local minimized = false
+local fullSize = main.Size
+
+minimize.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	if minimized then
+		content.Visible = false
+		main:TweenSize(UDim2.new(0, 280, 0, 36), "Out", "Sine", 0.3, true)
+		minimize.Text = "+"
+	else
+		main:TweenSize(fullSize, "Out", "Sine", 0.3, true)
+		task.wait(0.3)
+		content.Visible = true
+		minimize.Text = "-"
+	end
+end)
