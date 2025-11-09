@@ -187,7 +187,7 @@ local teleBtnY = 8
 local teleports = {
 	{nome = "Ilha 1 🏝️", pos = CFrame.new(552.188049, 16.6474037, -1038.63306)},
 	{nome = "Ilha 2 🌊", pos = CFrame.new(620.260925, 21.5955429, -1038.64014)},
-	{nome = "Ilha 3 🌋", pos = CFrame.new(677.856689, 26.6776505, -964.859619)}
+	{nome = "Rebirth Ilha 3 🌋", pos = CFrame.new(677.856689, 26.6776505, -964.859619)}
 }
 
 for _, info in ipairs(teleports) do
